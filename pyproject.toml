@@ -1,0 +1,20 @@
+
+[tool.poetry]
+name = "vk-chat-bot"
+version = "0.1.0"
+description = "VK chatbot demonstrating showcase to customers"
+authors = ["Andrey_Fominykh <meriadok2003@mail.ru>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+psycopg2-binary = "^2.9.3"
+peewee = "^3.15.2"
+python-dotenv = "^0.20.0"
+vk-api = "^11.9.9"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^5.0.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

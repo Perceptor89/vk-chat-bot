@@ -47,5 +47,5 @@ def get_sections():
     return Section.select()
 
 
-def get_products(section_id):
-    return Product.select().where(Product.section == section_id)
+def get_products():
+    return Product.select()

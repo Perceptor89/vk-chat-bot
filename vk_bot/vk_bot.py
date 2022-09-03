@@ -52,14 +52,18 @@ def to_state_one(user, inline=False):
     if user.state == 0:
         message = ('Приветствую! Пока мы спешим с ответом, '
                    'вы можете ознакомиться с витриной.')
+        kb = make_keyboard({'Витрина': VkKeyboardColor.PRIMARY}, inline=inline)
     else:
         message = 'Вы вышли из витрины.'
-    kb = make_keyboard({'Витрина': VkKeyboardColor.PRIMARY}, inline=inline)
+        kb = make_keyboard({'Витрина': VkKeyboardColor.PRIMARY})
     message_send(user.vk_id, message, kb.get_keyboard())
     bot_ORM.change_user_state(user, 1)
 
 
 def to_state_two(user, inline=False):
+    if user.state == 1:
+        kb = VkKeyboard.get_empty_keyboard()
+        message_send(user.vk_id, 'Вы зашли в витрину.', kb)
     message = 'Выберите раздел'
     sections = bot_ORM.get_section_names()
     btts = {section: VkKeyboardColor.PRIMARY for section in sections}

@@ -9,7 +9,7 @@ VK chatbot for demonstrating showcase to customers
 ## Installation:
 1. Clonning repository
 ```bash
-    $ git clone https://https://github.com/Perceptor89/vk-chat-bot.git
+    $ git clone https://github.com/Perceptor89/vk-chat-bot.git
 ```
 2. Install dependencies by poetry
 ```bash

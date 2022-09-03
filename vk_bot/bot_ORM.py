@@ -16,7 +16,7 @@ db = PostgresqlDatabase(
     port=os.getenv('DB_PORT'),
     )
 
-test_db = PostgresqlDatabase(
+db_test = PostgresqlDatabase(
     os.getenv('TEST_DB_NAME'),
     user=os.getenv('TEST_DB_USER'),
     password=os.getenv('TEST_DB_PASSWORD'),

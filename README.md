@@ -2,6 +2,8 @@
 VK chatbot for demonstrating showcase to customers
 #
 [![Python CI](https://github.com/Perceptor89/python-project-lvl3/actions/workflows/pyci.yml/badge.svg)](https://github.com/Perceptor89/python-project-lvl3/actions/workflows/pyci.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/46b02b47f5a0c5f355e9/maintainability)](https://codeclimate.com/github/Perceptor89/vk-chat-bot/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/46b02b47f5a0c5f355e9/test_coverage)](https://codeclimate.com/github/Perceptor89/vk-chat-bot/test_coverage)
 #
 
 ## Installation:

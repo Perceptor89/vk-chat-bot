@@ -13,12 +13,12 @@ from vk_api.utils import get_random_id
 load_dotenv()
 
 
-image_dir = os.getenv('IMAGES_DIR')
-token = os.getenv('TOKEN')
-group_id = os.getenv('GROUP_ID')
-vk_session = vk_api.VkApi(token=token)
-vk = vk_session.get_api()
-upload = VkUpload(vk_session)
+IMAGE_DIR = os.getenv('IMAGES_DIR')
+TOKEN = os.getenv('TOKEN')
+GROUP_ID = os.getenv('GROUP_ID')
+VK_SESSION = vk_api.VkApi(token=TOKEN)
+vk = VK_SESSION.get_api()
+upload = VkUpload(VK_SESSION)
 
 
 def make_keyboard(buttons, one_time=False, inline=False, columns=2, back=False):
@@ -72,7 +72,7 @@ def to_state_three(user, message_text, inline=False, is_product=None):
     if is_product:
         product = bot_ORM.get_product(message_text)
         description = product.description
-        img_path = os.path.join(image_dir, product.name + '.jpg')
+        img_path = os.path.join(IMAGE_DIR, product.name + '.jpg')
         photo = upload_photo(img_path) if os.path.exists(img_path) else None
         print(f'photo: {photo}')
         message_send(user.vk_id, description, attachment=photo)
@@ -127,7 +127,7 @@ def message_send(vk_id, message, kb=None, attachment=None):
 
 def start_bot():
     while True:
-        longpoll = VkBotLongPoll(vk_session, group_id)
+        longpoll = VkBotLongPoll(VK_SESSION, GROUP_ID)
         logging.info('Listening for new messages...')
         for event in longpoll.listen():
             logging.info(f'New event {type(event)}')

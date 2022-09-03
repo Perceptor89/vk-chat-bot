@@ -19,10 +19,14 @@ VK chatbot for demonstrating showcase to customers
 4. Start bot
 
 ```bash
-    $ make start demo
+    $ make demo
 ```
 WARNING: demo will rewrite database tables after asking,
-make sure you answer no, or use command without demo. Actually, you need yor database filled with data. To exit use:
+make sure you answer no, or use command without demo.
+```bash
+    $ make start
+```
+Actually, you need yor database filled with data. To exit use:
 ```bash
     Ctrl + C
 ```

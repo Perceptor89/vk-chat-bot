@@ -131,11 +131,16 @@ def message_send(vk_id, message, kb=None, attachment=None):
 
 def start_bot():
     while True:
-        longpoll = VkBotLongPoll(VK_SESSION, GROUP_ID)
-        logging.info('Listening for new messages...')
-        for event in longpoll.listen():
-            logging.info(f'New event {type(event)}')
-            if event.type == VkBotEventType.MESSAGE_NEW and event.from_user:
-                vk_id = event.obj['message']['peer_id']
-                logging.info(f'New message from id {vk_id}')
-                processing_message(vk_id, event)
+        try:  
+            longpoll = VkBotLongPoll(VK_SESSION, GROUP_ID)
+            logging.info('Listening for new messages...')
+            for event in longpoll.listen():
+                logging.info(f'New event {type(event)}')
+                if event.type == VkBotEventType.MESSAGE_NEW and event.from_user:
+                    vk_id = event.obj['message']['peer_id']
+                    logging.info(f'New message from id {vk_id}')
+                    processing_message(vk_id, event)
+        except Exception as error:
+            logging.info(error)
+            logging.info('Rebooting bot...')
+            pass

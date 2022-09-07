@@ -15,11 +15,8 @@ def main():
     try:
         start_bot()
     except KeyboardInterrupt:
+        logging.info('\nBot stopped. Bye.')
         sys.exit(0)
-    except Exception as error:
-        logging.info(error)
-        logging.info('Rebooting bot...')
-        pass
 
 
 if __name__ == '__main__':

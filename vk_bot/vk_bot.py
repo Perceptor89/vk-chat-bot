@@ -42,6 +42,7 @@ def upload_photo(image_path):
         photo_id = response['id']
         access_key = response['access_key']
         photo = f'photo{owner_id}_{photo_id}_{access_key}'
+        logging.info(f'Photo uploaded: {photo}')
         return photo
     except Exception:
         logging.info(f'Photo upload from {image_path} failed')
@@ -72,13 +73,12 @@ def to_state_two(user, inline=False):
     bot_ORM.change_user_state(user, 2)
 
 
-def to_state_three(user, message_text, inline=False, is_product=None):
-    if is_product:
+def to_state_three(user, message_text, inline=False):
+    if user.state == 3:
         product = bot_ORM.get_product(message_text)
         description = product.description
         img_path = os.path.join(IMAGE_DIR, product.name + '.jpg')
         photo = upload_photo(img_path) if os.path.exists(img_path) else None
-        print(f'photo: {photo}')
         message_send(user.vk_id, description, attachment=photo)
         section = bot_ORM.get_section_from_product(product)
         message = 'Что еще показать?'
@@ -92,31 +92,56 @@ def to_state_three(user, message_text, inline=False, is_product=None):
     bot_ORM.change_user_state(user, 3)
 
 
+def get_answer_type(message_text):
+    sections = bot_ORM.get_section_names()
+    products = bot_ORM.get_product_names()
+    types = {
+        sections: 'section',
+        products: 'product',
+        ('Витрина',): 'showcase',
+        ('Назад',): 'back',
+    }
+    for key, value in types.items():
+        if message_text in key:
+            logging.info(f'{message_text} has \'{value}\' type')
+            return value
+    else:
+        logging.info(f'Uknown message type for \'{message_text}\'')
+        return None
+
+
 def processing_message(vk_id, event):
     user = bot_ORM.get_user(vk_id)
     logging.info(f'User state: {user.state}')
     client_inline = event.obj['client_info']['inline_keyboard']
     message_text = event.obj['message']['text']
-    logging.info(f'User texted {message_text}')
+    logging.info(f'User texted \'{message_text}\'')
     if user.state == 0:
         to_state_one(user, inline=client_inline)
-    elif user.state == 1 and message_text == 'Витрина':
-        to_state_two(user, inline=client_inline)
-    elif user.state == 1 and message_text == 'Назад':
-        to_state_one(user, inline=client_inline)
-    elif user.state == 2 and message_text in bot_ORM.get_section_names():
-        to_state_three(user, message_text, inline=client_inline)
-    elif user.state == 2 and message_text == 'Назад':
-        to_state_one(user, inline=client_inline)
-    elif user.state == 3 and message_text in bot_ORM.get_product_names():
-        to_state_three(
-            user,
-            message_text,
-            inline=client_inline,
-            is_product=True,
-        )
-    elif user.state == 3 and message_text == 'Назад':
-        to_state_two(user, inline=client_inline)
+        return
+    answer_type = get_answer_type(message_text)
+    states_tree = {
+        1: {
+            'showcase': (to_state_two, (user,), {'inline': client_inline}),
+        },
+        2: {
+            'section': (to_state_three, (user, message_text), {
+                'inline': client_inline,
+            }),
+            'back': (to_state_one, (user,), {'inline': client_inline}),
+        },
+        3: {
+            'product': (to_state_three, (user, message_text), {
+                'inline': client_inline
+            }),
+            'back': (to_state_two, (user,), {'inline': client_inline}),
+        },
+    }
+    machine_reaction = states_tree.get(user.state).get(answer_type)
+    logging.info(f'Machine reaction is: {machine_reaction}')
+    if machine_reaction:
+        func, args, kwargs = machine_reaction
+        func(*args, **kwargs)
 
 
 def message_send(vk_id, message, kb=None, attachment=None):
@@ -131,7 +156,7 @@ def message_send(vk_id, message, kb=None, attachment=None):
 
 def start_bot():
     while True:
-        try:  
+        try:
             longpoll = VkBotLongPoll(VK_SESSION, GROUP_ID)
             logging.info('Listening for new messages...')
             for event in longpoll.listen():
@@ -141,6 +166,7 @@ def start_bot():
                     logging.info(f'New message from id {vk_id}')
                     processing_message(vk_id, event)
         except Exception as error:
+            # raise error
             logging.info(error)
             logging.info('Rebooting bot...')
-            pass
+            continue

@@ -50,7 +50,7 @@ def get_sections():
 
 
 def get_section_names():
-    return [section.name for section in get_sections()]
+    return (section.name for section in get_sections())
 
 
 def get_section_from_product(product):
@@ -69,7 +69,7 @@ def get_product(product_name):
 
 
 def get_product_names(section=None):
-    return [product.name for product in get_products(section=section)]
+    return (product.name for product in get_products(section=section))
 
 
 def get_user(vk_id):

@@ -29,7 +29,7 @@ class BaseTestCase(unittest.TestCase):
             assert section is None
             Section.create(name='Торты')
             Section.create(name='Пирожные')
-            names = bot_ORM.get_section_names()
+            names = list(bot_ORM.get_section_names())
             assert names == ['Торты', 'Пирожные']
             Section.drop_table(cascade=True)
 
